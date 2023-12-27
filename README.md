@@ -14,13 +14,13 @@ docker build -t lista-tarefas-api -f Dockerfile .
 docker compose build
 docker compose up -d
 
-[GET] http://localhost:5268/api/tarefas/obter-filtro
+[GET] http://localhost:5000/api/tarefas/obter-filtro
 
-[GET] http://localhost:5268/api/tarefas/obter-por-id
+[GET] http://localhost:5000/api/tarefas/obter-por-id
 
-[POST] http://localhost:5268/api/tarefas/criar
+[POST] http://localhost:5000/api/tarefas/criar
 
-[PUT] http://localhost:5268/api/tarefas/add-item
+[PUT] http://localhost:5000/api/tarefas/add-item
 
 ## Endpoints
 
