@@ -1,6 +1,6 @@
 @ListaTarefas.API_HostAddress = http://localhost:5268
 
-GET {{ListaTarefas.API_HostAddress}}/weatherforecast/
+GET {{ListaTarefas.API_HostAddress}}/api/tarefas/obter
 Accept: application/json
 
 ###
