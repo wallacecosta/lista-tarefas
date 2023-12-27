@@ -11,7 +11,16 @@ WebApi em .NET 8 com EF Core, Code First Migrations e banco de dados Sql Server.
 docker build -t lista-tarefas-api -f Dockerfile .
 
 ## Executar
+docker compose build
 docker compose up -d
+
+[GET] http://localhost:5268/api/tarefas/obter-filtro
+
+[GET] http://localhost:5268/api/tarefas/obter-por-id
+
+[POST] http://localhost:5268/api/tarefas/criar
+
+[PUT] http://localhost:5268/api/tarefas/add-item
 
 ## Endpoints
 
