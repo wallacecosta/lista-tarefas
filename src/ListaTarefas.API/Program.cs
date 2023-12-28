@@ -1,3 +1,5 @@
+using ListaTarefas.DomainServices;
+using ListaTarefas.Repositories;
 using ListaTarefas.Repositories.Context;
 using Microsoft.EntityFrameworkCore;
 
@@ -8,13 +10,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-
-builder.Services.AddDbContext<AppDbContext>(x =>
-{
-    var connectionString = builder.Configuration.GetConnectionString("AppConnection");
-    x.UseSqlServer(connectionString);
-});
-
+builder.Services.AddRepositories(builder.Configuration);
+builder.Services.AddDomainServices(builder.Configuration);
 builder.Services.AddControllersWithViews()
     .AddNewtonsoftJson(options =>
     options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
@@ -35,7 +32,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
 app.MapControllers();
+app.UseCors("default");
 
 app.Run();

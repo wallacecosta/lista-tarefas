@@ -10,6 +10,7 @@ COPY /ListaTarefas.sln /app/ListaTarefas.sln
 COPY /src/ListaTarefas.API/ListaTarefas.API.csproj /app/src/ListaTarefas.API/ListaTarefas.API.csproj
 COPY /src/ListaTarefas.Domain/ListaTarefas.Domain.csproj /app/src/ListaTarefas.Domain/ListaTarefas.Domain.csproj
 COPY /src/ListaTarefas.Repositories/ListaTarefas.Repositories.csproj /app/src/ListaTarefas.Repositories/ListaTarefas.Repositories.csproj
+COPY /src/ListaTarefas.DomainServices/ListaTarefas.DomainServices.csproj /app/src/ListaTarefas.DomainServices/ListaTarefas.DomainServices.csproj
 
 RUN dotnet restore --no-cache
 

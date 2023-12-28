@@ -1,8 +1,7 @@
 ﻿using ListaTarefas.Domain.Itens;
 using ListaTarefas.Domain.Tarefas;
-using ListaTarefas.Repositories.Context;
+using ListaTarefas.DomainServices.Abstraction;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace ListaTarefas.API.Controllers
 {
@@ -10,44 +9,40 @@ namespace ListaTarefas.API.Controllers
     [ApiController]
     public class TarefasController : ControllerBase
     {
-        private readonly AppDbContext _appDbContext;
+        private readonly IObterTarefasPorFiltroService _obterTarefasPorFiltroService;
+        private readonly IObterTarefaPorIdService _obterTarefaPorIdService;
+        private readonly ICriarTarefaService _criarTarefaService;
+        private readonly ICriarItemDaTarefaService _criarItemDaTarefaService;
+        private readonly IConcluirTarefaService _concluirTarefaService;
+        private readonly IConcluirItemTarefaService _concluirItemTarefaService;
+        private readonly IExcluirTarefaService _excluirTarefaService;
 
-        public TarefasController(AppDbContext appDbContext)
-            => _appDbContext = appDbContext;
+        public TarefasController(
+            IObterTarefasPorFiltroService obterTarefasPorFiltroService,
+            IObterTarefaPorIdService obterTarefaPorIdService,
+            ICriarTarefaService criarTarefaService,
+            ICriarItemDaTarefaService criarItemDaTarefaService,
+            IConcluirTarefaService concluirTarefaService,
+            IConcluirItemTarefaService concluirItemTarefaService,
+            IExcluirTarefaService excluirTarefaService)
+        {
+            _obterTarefasPorFiltroService = obterTarefasPorFiltroService;
+            _obterTarefaPorIdService = obterTarefaPorIdService;
+            _criarTarefaService = criarTarefaService;
+            _criarItemDaTarefaService = criarItemDaTarefaService;
+            _concluirTarefaService = concluirTarefaService;
+            _concluirItemTarefaService = concluirItemTarefaService;
+            _excluirTarefaService = excluirTarefaService;
+        }
 
         [HttpGet("obter-filtro")]
         public async Task<IActionResult> ObterPorFiltro([FromQuery] FiltroTarefa filtro)
-        {
-            if (filtro.Take is < 0 or >= 100)
-                throw new ArgumentOutOfRangeException("Top deve ser especificado entre 1 e 100");
-
-            if (filtro.Skip is < 0 or >= 100)
-                throw new ArgumentOutOfRangeException("Skip deve ser especificado entre 1 e 100");
-
-            var query = _appDbContext.Tarefas.AsQueryable();
-
-            if (!string.IsNullOrWhiteSpace(filtro.Criador))
-                query = query.Where(t => t.Criador.Contains(filtro.Criador));
-
-            if (!string.IsNullOrWhiteSpace(filtro.Nome))
-                query = query.Where(t => t.Nome == filtro.Nome);
-
-            var listaTarefas = await query
-                .Include(t => t.Itens)
-                .Take(filtro.Take == 0 ? 100 : filtro.Take)
-                .Skip(filtro.Skip)
-                .ToListAsync();
-
-            return Ok(listaTarefas);
-        }
+            => Ok(await _obterTarefasPorFiltroService.Execute(filtro));
 
         [HttpGet("obter-por-id")]
-        public async Task<IActionResult> ObterPorId(Guid id)
+        public async Task<IActionResult> ObterPorId(string id)
         {
-            var tarefa = await _appDbContext.Tarefas
-                .Where(t => t.TarefaId == id)
-                .Include(t => t.Itens)
-                .SingleOrDefaultAsync();
+            var tarefa = await _obterTarefaPorIdService.Execute(id);
 
             if (tarefa == null)
                 return NotFound();
@@ -55,41 +50,33 @@ namespace ListaTarefas.API.Controllers
             return Ok(tarefa);
         }
 
-        [HttpPost("criar")]
-        public async Task<IActionResult> Criar([FromBody] NovaTarefa novaTarefa)
-        {
-            var tarefa = Tarefa.Criar(novaTarefa.Criador, novaTarefa.Nome);
-
-            foreach (var itemNovo in novaTarefa.Items)
-            {
-                var item = Item.Criar(tarefa, itemNovo.Descricao);
-                tarefa.AdicionarItem(item);
-            }
-
-            await _appDbContext.Tarefas.AddAsync(tarefa);
-            await _appDbContext.SaveChangesAsync();
-
-            return CreatedAtAction(nameof(ObterPorId), new { tarefa.TarefaId }, tarefa);
-        }
+        [HttpPost("criar-tarefa")]
+        public async Task<IActionResult> CriarTarefa([FromBody] NovaTarefa request)
+            => Ok(await _criarTarefaService.Execute(request));
 
         [HttpPatch("add-item")]
-        public async Task<IActionResult> Criar([FromBody] AdicionarItem adicionarItem)
+        public async Task<IActionResult> CriarItem([FromBody] AdicionarItem request)
+            => Ok(await _criarItemDaTarefaService.Execute(request));
+
+        [HttpPatch("concluir-item/{id}")]
+        public async Task<IActionResult> ConcluirItem([FromRoute] string id)
         {
-            var tarefa = await _appDbContext.Tarefas
-                .Where(t => t.TarefaId == adicionarItem.TarefaId)
-                .Include(t => t.Itens)
-                .SingleOrDefaultAsync();
+            await _concluirItemTarefaService.Execute(id);
+            return Ok();
+        }
 
-            if (tarefa == null)
-                return NotFound();
+        [HttpPatch("concluir-tarefa/{id}")]
+        public async Task<IActionResult> ConcluirTarefa([FromRoute] string id)
+        {
+            await _concluirTarefaService.Execute(id);
+            return Ok();
+        }
 
-            var item = Item.Criar(tarefa, adicionarItem.DescricaoItem);
-            tarefa.AdicionarItem(item);
-
-            await _appDbContext.Tarefas.AddAsync(tarefa);
-            await _appDbContext.SaveChangesAsync();
-
-            return CreatedAtAction(nameof(ObterPorId), new { tarefa.TarefaId }, tarefa);
+        [HttpDelete("excluir-tarefa/{id}")]
+        public async Task<IActionResult> Excluir([FromRoute] string id)
+        {
+            await _excluirTarefaService.Execute(id);
+            return Ok();
         }
     }
 }

@@ -19,6 +19,12 @@ namespace ListaTarefas.Domain.Tarefas
 
         public static Tarefa Criar(string criador, string nome)
         {
+            if (string.IsNullOrWhiteSpace(criador))
+                throw new ArgumentNullException(nameof(criador));
+
+            if (string.IsNullOrWhiteSpace(nome))
+                throw new ArgumentNullException(nameof(nome));
+
             var tarefa = new Tarefa
             {
                 TarefaId = Guid.NewGuid(),
@@ -40,5 +46,8 @@ namespace ListaTarefas.Domain.Tarefas
 
             Itens.Add(item);
         }
+
+        public void Concluir()
+            => Status = Status.Concluido;
     }
 }

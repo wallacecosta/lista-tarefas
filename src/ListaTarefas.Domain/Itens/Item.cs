@@ -29,5 +29,7 @@ namespace ListaTarefas.Domain.Itens
                 Descricao = descricao
             };
         }
+
+        public void Concluir(Item item) => item.Status = Status.Concluido;
     }
 }

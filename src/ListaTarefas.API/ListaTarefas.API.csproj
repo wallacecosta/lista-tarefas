@@ -18,6 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\ListaTarefas.DomainServices\ListaTarefas.DomainServices.csproj" />
     <ProjectReference Include="..\ListaTarefas.Domain\ListaTarefas.Domain.csproj" />
     <ProjectReference Include="..\ListaTarefas.Repositories\ListaTarefas.Repositories.csproj" />
   </ItemGroup>
