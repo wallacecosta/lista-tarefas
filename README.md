@@ -11,8 +11,15 @@ WebApi em .NET 8 com EF Core, Code First Migrations e banco de dados Sql Server.
 docker build -t lista-tarefas-api -f Dockerfile .
 
 ## Executar
+### Localmente + Banco de dados via Docker
+docker run -v ~/docker --name sqlserver -e "ACCEPT_EULA=Y" -e "MSSQL_SA_PASSWORD=P@ssw0rd" -p 1433:1433 -d mcr.microsoft.com/mssql/server
+dotnet run --project .\src\ListaTarefas.API\
+
+### Docker
 docker compose build
 docker compose up -d
+
+## Endpoints
 
 [GET] http://localhost:5000/api/tarefas/obter-filtro
 
@@ -27,8 +34,6 @@ docker compose up -d
 [PATH] http://localhost:5000/api/tarefas/concluir-tarefa/{id}
 
 [DELETE] http://localhost:5000/api/tarefas/excluir-tarefa/{id}
-
-## Endpoints
 
 ![image](https://github.com/wallacecosta/lista-tarefas/assets/25742247/4acf9a82-fe34-4db0-839a-d81f6f14327e)
 
