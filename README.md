@@ -20,11 +20,17 @@ docker compose up -d
 
 [POST] http://localhost:5000/api/tarefas/criar
 
-[PUT] http://localhost:5000/api/tarefas/add-item
+[PATH] http://localhost:5000/api/tarefas/add-item
+
+[PATH] http://localhost:5000/api/tarefas/concluir-item/{id}
+
+[PATH] http://localhost:5000/api/tarefas/concluir-tarefa/{id}
+
+[DELETE] http://localhost:5000/api/tarefas/excluir-tarefa/{id}
 
 ## Endpoints
 
-![endpoints](https://github.com/wallacecosta/lista-tarefas/assets/25742247/b4d90c71-9670-41ce-be1d-73b8851fe4ae)
+![image](https://github.com/wallacecosta/lista-tarefas/assets/25742247/4acf9a82-fe34-4db0-839a-d81f6f14327e)
 
 ## Modelos
 
