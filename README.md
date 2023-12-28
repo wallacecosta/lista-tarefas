@@ -13,10 +13,12 @@ docker build -t lista-tarefas-api -f Dockerfile .
 ## Executar
 ### Localmente + Banco de dados via Docker
 docker run -v ~/docker --name sqlserver -e "ACCEPT_EULA=Y" -e "MSSQL_SA_PASSWORD=P@ssw0rd" -p 1433:1433 -d mcr.microsoft.com/mssql/server
+
 dotnet run --project .\src\ListaTarefas.API\
 
 ### Docker
 docker compose build
+
 docker compose up -d
 
 ## Endpoints
