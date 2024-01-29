@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/dotnet/sdk:8.0 as build
+FROM mcr.microsoft.com/dotnet/sdk:8.0-alpine as build
 
 EXPOSE 80
 
@@ -19,10 +19,14 @@ COPY . .
 RUN dotnet build \
     && dotnet publish -c Release -o /build
 
-FROM mcr.microsoft.com/dotnet/aspnet:8.0
+FROM mcr.microsoft.com/dotnet/aspnet:8.0-alpine
+
+RUN apk update && apk add libgdiplus
+RUN apk update && apk add icu-libs
 
 WORKDIR /app
 
+ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false
 ENV ASPNETCORE_URLS=http://+:80
 
 COPY --from=build /build ./
