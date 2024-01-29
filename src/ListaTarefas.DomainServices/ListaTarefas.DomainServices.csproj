@@ -11,8 +11,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\src\ListaTarefas.Domain\ListaTarefas.Domain.csproj" />
-    <ProjectReference Include="..\src\ListaTarefas.Repositories\ListaTarefas.Repositories.csproj" />
+    <ProjectReference Include="..\ListaTarefas.Domain\ListaTarefas.Domain.csproj" />
+    <ProjectReference Include="..\ListaTarefas.Repositories\ListaTarefas.Repositories.csproj" />
   </ItemGroup>
 
 </Project>
